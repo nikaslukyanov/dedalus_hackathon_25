@@ -1,0 +1,30 @@
+[
+  {
+    "type": "click",
+    "x": 454.35546875,
+    "y": 506.34765625,
+    "button": "Button.left",
+    "timestamp": "2025-10-24T14:44:24.480830",
+    "screenshot_paths": [
+      "recordings/20251024_144428_screenshots/event_0_frame_0.jpg",
+      "recordings/20251024_144428_screenshots/event_0_frame_1.jpg",
+      "recordings/20251024_144428_screenshots/event_0_frame_2.jpg",
+      "recordings/20251024_144428_screenshots/event_0_frame_3.jpg",
+      "recordings/20251024_144428_screenshots/event_0_frame_4.jpg"
+    ]
+  },
+  {
+    "type": "click",
+    "x": 452.23828125,
+    "y": 456.42578125,
+    "button": "Button.left",
+    "timestamp": "2025-10-24T14:44:26.664088",
+    "screenshot_paths": [
+      "recordings/20251024_144428_screenshots/event_1_frame_0.jpg",
+      "recordings/20251024_144428_screenshots/event_1_frame_1.jpg",
+      "recordings/20251024_144428_screenshots/event_1_frame_2.jpg",
+      "recordings/20251024_144428_screenshots/event_1_frame_3.jpg",
+      "recordings/20251024_144428_screenshots/event_1_frame_4.jpg"
+    ]
+  }
+]
