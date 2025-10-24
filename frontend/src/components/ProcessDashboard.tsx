@@ -30,10 +30,6 @@ const ProcessDashboard = () => {
     setIsNewProcessModalOpen(true);
   };
 
-  const handleProcessCreated = () => {
-    setIsProcessing(true);
-    toast.success('Process created! Starting analysis...');
-  };
 
   const handleProcessingComplete = () => {
     setIsProcessing(false);
