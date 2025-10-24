@@ -37,9 +37,13 @@ export const useRecording = (onRecordingComplete?: (blob: Blob) => void): Record
         }
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
         console.log('Recording completed:', blob);
+
+        // Simulate 5 second processing delay
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
         if (onRecordingComplete) {
           onRecordingComplete(blob);
         }

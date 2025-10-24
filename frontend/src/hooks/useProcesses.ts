@@ -11,14 +11,15 @@ export const useProcesses = () => {
     pauseProcess,
   } = useProcessStore();
 
-  const createProcess = (name: string, description: string, recording: Blob | null) => {
-    addProcess({
+  const createProcess = (name: string, description: string, recording: Blob | null): string => {
+    const id = addProcess({
       name,
       description,
       recording,
-      status: 'ready',
+      status: 'processing',
       lastRun: null,
     });
+    return id;
   };
 
   const updateProcessStatus = (id: string, status: Process['status']) => {

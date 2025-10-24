@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Square, Check, Loader2 } from 'lucide-react';
+import { Play, Square, Check, Loader2 } from 'lucide-react';
 import { useRecording } from '../hooks/useRecording';
 
 interface RecordButtonProps {
@@ -26,7 +26,7 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
   const getButtonContent = () => {
     switch (recordingState) {
       case 'idle':
-        return <Mic className="w-8 h-8" />;
+        return <Play className="w-8 h-8 ml-1" />;
       case 'recording':
         return <Square className="w-6 h-6" />;
       case 'processing':
@@ -34,7 +34,7 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
       case 'success':
         return <Check className="w-8 h-8" />;
       default:
-        return <Mic className="w-8 h-8" />;
+        return <Play className="w-8 h-8 ml-1" />;
     }
   };
 
@@ -129,10 +129,10 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
             <p className="text-sm text-danger font-semibold">Recording... Click to stop</p>
           )}
           {recordingState === 'processing' && (
-            <p className="text-sm text-neutral-600 font-medium">Processing recording...</p>
+            <p className="text-sm text-neutral-600 font-medium">Processing...</p>
           )}
           {recordingState === 'success' && (
-            <p className="text-sm text-success font-semibold">Recording uploaded successfully</p>
+            <p className="text-sm text-success font-semibold">Recording processed successfully</p>
           )}
         </motion.div>
       </AnimatePresence>

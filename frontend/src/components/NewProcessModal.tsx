@@ -58,7 +58,7 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
     toast.success('Recording completed successfully!');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!processName.trim()) {
       toast.error('Please enter a process name');
       return;
@@ -81,9 +81,16 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
       });
       toast.success('Process updated successfully!');
     } else {
-      // Create new process
-      createProcess(processName, description, recording);
-      toast.success('Process created successfully!');
+      // Create new process with processing status
+      const newProcessId = createProcess(processName, description, recording);
+
+      toast.success('Processing your recording...');
+
+      // After 5 seconds, update status to ready
+      setTimeout(() => {
+        updateProcess(newProcessId, { status: 'ready' });
+        toast.success('Process is ready to run!');
+      }, 5000);
     }
 
     // Reset form

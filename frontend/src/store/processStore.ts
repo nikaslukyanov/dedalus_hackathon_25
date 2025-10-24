@@ -19,6 +19,7 @@ export const useProcessStore = create<ProcessStore>()(
         set((state) => ({
           processes: [...state.processes, newProcess],
         }));
+        return newProcess.id;
       },
 
       updateProcess: (id, updates) => {

@@ -20,7 +20,7 @@ export interface ProcessStore {
   isRecording: boolean;
   isProcessing: boolean;
   currentRecordingTime: number;
-  addProcess: (process: Omit<Process, 'id' | 'createdAt'>) => void;
+  addProcess: (process: Omit<Process, 'id' | 'createdAt'>) => string;
   updateProcess: (id: string, updates: Partial<Process>) => void;
   deleteProcess: (id: string) => void;
   setRecording: (isRecording: boolean) => void;
