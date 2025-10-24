@@ -1,14 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Square, Check, Loader2 } from 'lucide-react';
 import { useRecording } from '../hooks/useRecording';
-import { RecordingState } from '../types';
 
 interface RecordButtonProps {
   onRecordingComplete: (blob: Blob) => void;
 }
 
 const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
-  const { isRecording, recordingTime, startRecording, stopRecording, recordingState } = useRecording();
+  const { recordingTime, startRecording, stopRecording, recordingState } = useRecording(onRecordingComplete);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -58,7 +57,7 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
     <div className="flex flex-col items-center space-y-4">
       {/* Time display */}
       <AnimatePresence>
-        {isRecording && (
+        {recordingState === 'recording' && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,7 +71,7 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
 
       {/* Sound wave animation */}
       <AnimatePresence>
-        {isRecording && (
+        {recordingState === 'recording' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

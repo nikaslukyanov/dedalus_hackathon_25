@@ -43,6 +43,7 @@ export const useProcesses = () => {
   return {
     processes,
     createProcess,
+    updateProcess,
     updateProcessStatus,
     deleteProcess,
     runProcess,

@@ -4,18 +4,36 @@ import { X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import RecordButton from './RecordButton';
 import { useProcesses } from '../hooks/useProcesses';
+import { Process } from '../types';
 
 interface NewProcessModalProps {
   isOpen: boolean;
   onClose: () => void;
+  editProcess?: Process | null;
 }
 
-const NewProcessModal = ({ isOpen, onClose }: NewProcessModalProps) => {
+const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModalProps) => {
   const [processName, setProcessName] = useState('');
   const [description, setDescription] = useState('');
   const [recording, setRecording] = useState<Blob | null>(null);
   const [isRecordingComplete, setIsRecordingComplete] = useState(false);
-  const { createProcess } = useProcesses();
+  const { createProcess, updateProcess } = useProcesses();
+
+  // Load process data when editing
+  useEffect(() => {
+    if (editProcess) {
+      setProcessName(editProcess.name);
+      setDescription(editProcess.description);
+      setRecording(editProcess.recording);
+      setIsRecordingComplete(!!editProcess.recording);
+    } else {
+      // Reset form when creating new process
+      setProcessName('');
+      setDescription('');
+      setRecording(null);
+      setIsRecordingComplete(false);
+    }
+  }, [editProcess, isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,9 +72,20 @@ const NewProcessModal = ({ isOpen, onClose }: NewProcessModalProps) => {
       return;
     }
 
-    createProcess(processName, description, recording);
-    toast.success('Process created successfully!');
-    
+    if (editProcess) {
+      // Update existing process
+      updateProcess(editProcess.id, {
+        name: processName,
+        description: description,
+        recording: recording,
+      });
+      toast.success('Process updated successfully!');
+    } else {
+      // Create new process
+      createProcess(processName, description, recording);
+      toast.success('Process created successfully!');
+    }
+
     // Reset form
     setProcessName('');
     setDescription('');
@@ -93,7 +122,7 @@ const NewProcessModal = ({ isOpen, onClose }: NewProcessModalProps) => {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Create New Process
+                  {editProcess ? 'Edit Process' : 'Create New Process'}
                 </h2>
                 <button
                   onClick={onClose}

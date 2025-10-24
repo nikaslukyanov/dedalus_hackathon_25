@@ -7,9 +7,11 @@ import NewProcessModal from './NewProcessModal';
 import ProcessingOverlay from './ProcessingOverlay';
 import EmptyState from './EmptyState';
 import { useProcesses } from '../hooks/useProcesses';
+import { Process } from '../types';
 
 const ProcessDashboard = () => {
   const [isNewProcessModalOpen, setIsNewProcessModalOpen] = useState(false);
+  const [editingProcess, setEditingProcess] = useState<Process | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { processes } = useProcesses();
 
@@ -27,9 +29,19 @@ const ProcessDashboard = () => {
   }, []);
 
   const handleNewProcess = () => {
+    setEditingProcess(null);
     setIsNewProcessModalOpen(true);
   };
 
+  const handleEditProcess = (process: Process) => {
+    setEditingProcess(process);
+    setIsNewProcessModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsNewProcessModalOpen(false);
+    setEditingProcess(null);
+  };
 
   const handleProcessingComplete = () => {
     setIsProcessing(false);
@@ -69,7 +81,7 @@ const ProcessDashboard = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {processes.map((process, index) => (
-              <ProcessCard key={process.id} process={process} index={index} />
+              <ProcessCard key={process.id} process={process} index={index} onEdit={handleEditProcess} />
             ))}
           </motion.div>
         )}
@@ -78,7 +90,8 @@ const ProcessDashboard = () => {
       {/* Modals */}
       <NewProcessModal
         isOpen={isNewProcessModalOpen}
-        onClose={() => setIsNewProcessModalOpen(false)}
+        onClose={handleCloseModal}
+        editProcess={editingProcess}
       />
 
       <ProcessingOverlay

@@ -1,11 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
 import { RecordingHook, RecordingState } from '../types';
 
-export const useRecording = (): RecordingHook => {
+export const useRecording = (onRecordingComplete?: (blob: Blob) => void): RecordingHook => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
-  
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,8 +39,10 @@ export const useRecording = (): RecordingHook => {
 
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'video/webm' });
-        // Here you would typically upload the blob to your server
         console.log('Recording completed:', blob);
+        if (onRecordingComplete) {
+          onRecordingComplete(blob);
+        }
         setRecordingState('success');
       };
 
@@ -56,7 +58,7 @@ export const useRecording = (): RecordingHook => {
       setRecordingState('idle');
       setIsRecording(false);
     }
-  }, []);
+  }, [onRecordingComplete]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording) {

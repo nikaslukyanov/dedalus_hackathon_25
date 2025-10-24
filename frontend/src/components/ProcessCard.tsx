@@ -1,19 +1,34 @@
 import { motion } from 'framer-motion';
-import { Play, Clock } from 'lucide-react';
+import { Play, Clock, Trash2, Edit2 } from 'lucide-react';
 import { Process } from '../types';
 import { useProcesses } from '../hooks/useProcesses';
+import { toast } from 'react-hot-toast';
 
 interface ProcessCardProps {
   process: Process;
   index: number;
+  onEdit: (process: Process) => void;
 }
 
-const ProcessCard = ({ process, index }: ProcessCardProps) => {
-  const { runProcess, formatLastRun } = useProcesses();
+const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
+  const { runProcess, formatLastRun, deleteProcess } = useProcesses();
 
   const handleRun = (e: React.MouseEvent) => {
     e.stopPropagation();
     runProcess(process.id);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to delete "${process.name}"?`)) {
+      deleteProcess(process.id);
+      toast.success('Process deleted successfully');
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(process);
   };
 
   const getStatusColor = (status: Process['status']) => {
@@ -54,16 +69,38 @@ const ProcessCard = ({ process, index }: ProcessCardProps) => {
           <Clock className="w-4 h-4 mr-1" />
           {formatLastRun(process.lastRun)}
         </div>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleRun}
-          className="btn-success flex items-center space-x-1 text-sm"
-        >
-          <Play className="w-4 h-4" />
-          <span>Run</span>
-        </motion.button>
+
+        <div className="flex items-center space-x-2">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleEdit}
+            className="p-2 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg transition-all duration-200"
+            title="Edit process"
+          >
+            <Edit2 className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleDelete}
+            className="p-2 text-gray-600 hover:text-danger hover:bg-red-50 rounded-lg transition-all duration-200"
+            title="Delete process"
+          >
+            <Trash2 className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleRun}
+            className="btn-success flex items-center space-x-1 text-sm"
+          >
+            <Play className="w-4 h-4" />
+            <span>Run</span>
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );
