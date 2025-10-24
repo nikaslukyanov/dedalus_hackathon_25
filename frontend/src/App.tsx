@@ -4,15 +4,31 @@ import './index.css';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <ProcessDashboard />
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
-          duration: 4000,
+          duration: 3000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: '#171717',
+            color: '#FAFAFA',
+            borderRadius: '0.75rem',
+            padding: '12px 16px',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+          },
+          success: {
+            iconTheme: {
+              primary: '#059669',
+              secondary: '#FAFAFA',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#DC2626',
+              secondary: '#FAFAFA',
+            },
           },
         }}
       />

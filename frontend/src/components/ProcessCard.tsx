@@ -40,11 +40,11 @@ const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
       case 'ready':
         return 'bg-success';
       case 'processing':
-        return 'bg-yellow-400';
+        return 'bg-warning';
       case 'running':
-        return 'bg-blue-500';
+        return 'bg-primary';
       default:
-        return 'bg-gray-400';
+        return 'bg-neutral-400';
     }
   };
 
@@ -52,34 +52,34 @@ const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02 }}
-      className="card p-5 cursor-pointer group"
+      transition={{ delay: index * 0.08, duration: 0.3, ease: 'easeOut' }}
+      whileHover={{ y: -4 }}
+      className="card p-6 cursor-pointer group"
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <h3 className="font-semibold text-lg text-gray-900 mb-1">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-lg text-neutral-900 mb-1.5 truncate">
             {process.name}
           </h3>
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-sm text-neutral-600 line-clamp-2 leading-relaxed">
             {process.description}
           </p>
         </div>
-        <div className={`w-3 h-3 rounded-full ${getStatusColor(process.status)} ml-2`} />
+        <div className={`w-3 h-3 rounded-full ${getStatusColor(process.status)} ml-3 mt-1.5 flex-shrink-0 shadow-sm`} />
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center text-sm text-gray-500">
-          <Clock className="w-4 h-4 mr-1" />
-          {formatLastRun(process.lastRun)}
+      <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+        <div className="flex items-center text-sm text-neutral-500">
+          <Clock className="w-4 h-4 mr-1.5" />
+          <span className="font-medium">{formatLastRun(process.lastRun)}</span>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-1.5">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleEdit}
-            className="p-2 text-gray-600 hover:text-primary hover:bg-blue-50 rounded-lg transition-all duration-200"
+            className="p-2 text-neutral-600 hover:text-primary hover:bg-primary-50 rounded-lg transition-all duration-150"
             title="Edit process"
           >
             <Edit2 className="w-4 h-4" />
@@ -89,7 +89,7 @@ const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleDelete}
-            className="p-2 text-gray-600 hover:text-danger hover:bg-red-50 rounded-lg transition-all duration-200"
+            className="p-2 text-neutral-600 hover:text-danger hover:bg-red-50 rounded-lg transition-all duration-150"
             title="Delete process"
           >
             <Trash2 className="w-4 h-4" />

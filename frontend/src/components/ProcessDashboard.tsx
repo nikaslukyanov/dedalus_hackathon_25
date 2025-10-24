@@ -49,13 +49,13 @@ const ProcessDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white border-b border-neutral-200 shadow-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">EchoTwin</h1>
+              <h1 className="text-2xl font-bold text-neutral-900">EchoTwin</h1>
             </div>
             <motion.button
               whileHover={{ scale: 1.05 }}

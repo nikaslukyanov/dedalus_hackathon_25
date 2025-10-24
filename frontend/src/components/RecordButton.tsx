@@ -41,15 +41,15 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
   const getButtonClass = () => {
     switch (recordingState) {
       case 'idle':
-        return 'bg-gradient-to-r from-danger to-red-600 hover:from-red-600 hover:to-red-700';
+        return 'bg-danger hover:bg-danger-dark shadow-medium hover:shadow-hover';
       case 'recording':
-        return 'bg-gradient-to-r from-danger to-red-600 animate-pulse-glow';
+        return 'bg-danger animate-pulse-glow';
       case 'processing':
-        return 'bg-gray-400 cursor-not-allowed';
+        return 'bg-neutral-400 cursor-not-allowed';
       case 'success':
-        return 'bg-gradient-to-r from-success to-green-600';
+        return 'bg-success shadow-medium';
       default:
-        return 'bg-gradient-to-r from-danger to-red-600';
+        return 'bg-danger';
     }
   };
 
@@ -105,7 +105,7 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
         disabled={recordingState === 'processing'}
         className={`
           w-20 h-20 rounded-full text-white flex items-center justify-center
-          transition-all duration-200 shadow-lg
+          transition-all duration-200
           ${getButtonClass()}
           ${recordingState === 'processing' ? 'cursor-not-allowed' : 'cursor-pointer'}
         `}
@@ -123,16 +123,16 @@ const RecordButton = ({ onRecordingComplete }: RecordButtonProps) => {
           className="text-center"
         >
           {recordingState === 'idle' && (
-            <p className="text-sm text-gray-600">Click to start recording</p>
+            <p className="text-sm text-neutral-600 font-medium">Click to start recording</p>
           )}
           {recordingState === 'recording' && (
-            <p className="text-sm text-danger font-medium">Recording... Click to stop</p>
+            <p className="text-sm text-danger font-semibold">Recording... Click to stop</p>
           )}
           {recordingState === 'processing' && (
-            <p className="text-sm text-gray-600">Processing recording...</p>
+            <p className="text-sm text-neutral-600 font-medium">Processing recording...</p>
           )}
           {recordingState === 'success' && (
-            <p className="text-sm text-success font-medium">Recording uploaded successfully</p>
+            <p className="text-sm text-success font-semibold">Recording uploaded successfully</p>
           )}
         </motion.div>
       </AnimatePresence>

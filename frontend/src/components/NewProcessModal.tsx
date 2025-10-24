@@ -114,29 +114,29 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             className="bg-white h-full w-full md:w-2/5 lg:w-2/5 xl:w-2/5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-full flex flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
+              <div className="flex items-center justify-between p-6 border-b border-neutral-200 bg-white">
+                <h2 className="text-xl font-semibold text-neutral-900">
                   {editProcess ? 'Edit Process' : 'Create New Process'}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 text-neutral-500" />
                 </button>
               </div>
 
               {/* Content */}
-              <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+              <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-neutral-50">
                 {/* Process Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
                     Process Name
                   </label>
                   <input
@@ -147,8 +147,8 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
                     maxLength={50}
                     className="input-field"
                   />
-                  <div className="flex justify-end mt-1">
-                    <span className="text-xs text-gray-500">
+                  <div className="flex justify-end mt-1.5">
+                    <span className="text-xs text-neutral-500 font-medium">
                       {processName.length}/50
                     </span>
                   </div>
@@ -156,7 +156,7 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
                     Process Description
                   </label>
                   <textarea
@@ -167,16 +167,16 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
                     rows={4}
                     className="textarea-field"
                   />
-                  <div className="flex justify-end mt-1">
-                    <span className="text-xs text-gray-500">
+                  <div className="flex justify-end mt-1.5">
+                    <span className="text-xs text-neutral-500 font-medium">
                       {description.length}/200
                     </span>
                   </div>
                 </div>
 
                 {/* Recording Section */}
-                <div className="text-center">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <div className="text-center pt-4">
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-6">
                     Record Your Process
                   </h3>
                   <RecordButton onRecordingComplete={handleRecordingComplete} />
@@ -184,11 +184,11 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-gray-200">
-                <div className="flex justify-end space-x-3">
+              <div className="p-6 border-t border-neutral-200 bg-white">
+                <div className="flex justify-end gap-3">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="px-5 py-2.5 text-neutral-700 font-medium hover:bg-neutral-100 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
@@ -197,7 +197,7 @@ const NewProcessModal = ({ isOpen, onClose, editProcess = null }: NewProcessModa
                     disabled={!isRecordingComplete}
                     className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirm
+                    {editProcess ? 'Save Changes' : 'Create Process'}
                   </button>
                 </div>
               </div>
