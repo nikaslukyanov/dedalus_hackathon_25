@@ -1,0 +1,183 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import RecordButton from './RecordButton';
+import { useProcesses } from '../hooks/useProcesses';
+
+interface NewProcessModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const NewProcessModal = ({ isOpen, onClose }: NewProcessModalProps) => {
+  const [processName, setProcessName] = useState('');
+  const [description, setDescription] = useState('');
+  const [recording, setRecording] = useState<Blob | null>(null);
+  const [isRecordingComplete, setIsRecordingComplete] = useState(false);
+  const { createProcess } = useProcesses();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+      if (e.key === ' ' && isOpen) {
+        e.preventDefault();
+        // Handle space key for recording
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
+  const handleRecordingComplete = (blob: Blob) => {
+    setRecording(blob);
+    setIsRecordingComplete(true);
+    toast.success('Recording completed successfully!');
+  };
+
+  const handleSubmit = () => {
+    if (!processName.trim()) {
+      toast.error('Please enter a process name');
+      return;
+    }
+    if (!description.trim()) {
+      toast.error('Please enter a description');
+      return;
+    }
+    if (!recording) {
+      toast.error('Please record the process first');
+      return;
+    }
+
+    createProcess(processName, description, recording);
+    toast.success('Process created successfully!');
+    
+    // Reset form
+    setProcessName('');
+    setDescription('');
+    setRecording(null);
+    setIsRecordingComplete(false);
+    onClose();
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
+          onClick={handleBackdropClick}
+        >
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="bg-white h-full w-full md:w-2/5 lg:w-2/5 xl:w-2/5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Create New Process
+                </h2>
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+                {/* Process Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Process Name
+                  </label>
+                  <input
+                    type="text"
+                    value={processName}
+                    onChange={(e) => setProcessName(e.target.value)}
+                    placeholder="e.g., Weekly Client Report"
+                    maxLength={50}
+                    className="input-field"
+                  />
+                  <div className="flex justify-end mt-1">
+                    <span className="text-xs text-gray-500">
+                      {processName.length}/50
+                    </span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Process Description
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Describe what this process does..."
+                    maxLength={200}
+                    rows={4}
+                    className="textarea-field"
+                  />
+                  <div className="flex justify-end mt-1">
+                    <span className="text-xs text-gray-500">
+                      {description.length}/200
+                    </span>
+                  </div>
+                </div>
+
+                {/* Recording Section */}
+                <div className="text-center">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Record Your Process
+                  </h3>
+                  <RecordButton onRecordingComplete={handleRecordingComplete} />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-gray-200">
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={onClose}
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!isRecordingComplete}
+                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default NewProcessModal;
