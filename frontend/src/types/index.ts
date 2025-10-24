@@ -26,7 +26,7 @@ export interface ProcessStore {
   setRecording: (isRecording: boolean) => void;
   setProcessing: (isProcessing: boolean) => void;
   setRecordingTime: (time: number) => void;
-  runProcess: (id: string) => void;
+  runProcess: (id: string) => Promise<void>;
   pauseProcess: (id: string) => void;
 }
 

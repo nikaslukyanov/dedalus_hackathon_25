@@ -13,12 +13,18 @@ interface ProcessCardProps {
 const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
   const { runProcess, pauseProcess, formatLastRun, deleteProcess } = useProcesses();
 
-  const handleRunPause = (e: React.MouseEvent) => {
+  const handleRunPause = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (process.status === 'running') {
       pauseProcess(process.id);
     } else {
-      runProcess(process.id);
+      try {
+        await runProcess(process.id);
+        toast.success('Process completed successfully!');
+      } catch (error) {
+        toast.error('Failed to run process. Check console for details.');
+        console.error('Process execution error:', error);
+      }
     }
   };
 

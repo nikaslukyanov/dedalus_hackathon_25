@@ -1,0 +1,14 @@
+{
+    "task_id": "001",
+    "task_name": "Order egg sandwich at Wu + Nussbaum",
+    "steps": [
+        {
+            "step_id": "001",
+            "step_name": "Navigate to the menu or food section"
+        },
+        {
+            "step_id": "002",
+            "step_name": "Find the egg sandwich option"
+        }
+    ]
+}

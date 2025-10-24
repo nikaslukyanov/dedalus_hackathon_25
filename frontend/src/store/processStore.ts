@@ -47,14 +47,57 @@ export const useProcessStore = create<ProcessStore>()(
         set({ currentRecordingTime: time });
       },
 
-      runProcess: (id) => {
+      runProcess: async (id) => {
+        const process = get().processes.find(p => p.id === id);
+        if (!process) return;
+
+        // Update UI to show running status
         set((state) => ({
-          processes: state.processes.map((process) =>
-            process.id === id
-              ? { ...process, status: 'running', lastRun: new Date() }
-              : process
+          processes: state.processes.map((p) =>
+            p.id === id
+              ? { ...p, status: 'running', lastRun: new Date() }
+              : p
           ),
         }));
+
+        try {
+          // Call backend API to execute the browser automation
+          const response = await fetch('http://localhost:8000/api/run-process', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              process_id: process.id,
+              process_name: process.name,
+              task_json_path: '/Users/alissawu/dedalus_hackathon_25/backend/browser_agent/sample.json',
+              website_url: 'https://wuandnussbaumnyc.com/',
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          console.log('Process completed:', result);
+
+          // Update to ready status after completion
+          set((state) => ({
+            processes: state.processes.map((p) =>
+              p.id === id ? { ...p, status: 'ready' } : p
+            ),
+          }));
+        } catch (error) {
+          console.error('Error running process:', error);
+          // Reset to ready on error
+          set((state) => ({
+            processes: state.processes.map((p) =>
+              p.id === id ? { ...p, status: 'ready' } : p
+            ),
+          }));
+          throw error;
+        }
       },
 
       pauseProcess: (id) => {
