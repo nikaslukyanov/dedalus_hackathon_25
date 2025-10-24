@@ -56,6 +56,16 @@ export const useProcessStore = create<ProcessStore>()(
           ),
         }));
       },
+
+      pauseProcess: (id) => {
+        set((state) => ({
+          processes: state.processes.map((process) =>
+            process.id === id
+              ? { ...process, status: 'ready' }
+              : process
+          ),
+        }));
+      },
     }),
     {
       name: 'echotwin-processes',

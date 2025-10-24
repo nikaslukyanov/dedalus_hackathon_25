@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Play, Clock, Trash2, Edit2 } from 'lucide-react';
+import { Play, Clock, Trash2, Edit2, Pause } from 'lucide-react';
 import { Process } from '../types';
 import { useProcesses } from '../hooks/useProcesses';
 import { toast } from 'react-hot-toast';
@@ -11,11 +11,15 @@ interface ProcessCardProps {
 }
 
 const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
-  const { runProcess, formatLastRun, deleteProcess } = useProcesses();
+  const { runProcess, pauseProcess, formatLastRun, deleteProcess } = useProcesses();
 
-  const handleRun = (e: React.MouseEvent) => {
+  const handleRunPause = (e: React.MouseEvent) => {
     e.stopPropagation();
-    runProcess(process.id);
+    if (process.status === 'running') {
+      pauseProcess(process.id);
+    } else {
+      runProcess(process.id);
+    }
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -94,11 +98,24 @@ const ProcessCard = ({ process, index, onEdit }: ProcessCardProps) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleRun}
-            className="btn-success flex items-center space-x-1 text-sm"
+            onClick={handleRunPause}
+            className={`flex items-center space-x-1 text-sm ${
+              process.status === 'running'
+                ? 'btn-danger'
+                : 'btn-success'
+            }`}
           >
-            <Play className="w-4 h-4" />
-            <span>Run</span>
+            {process.status === 'running' ? (
+              <>
+                <Pause className="w-4 h-4" />
+                <span>Pause</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                <span>Run</span>
+              </>
+            )}
           </motion.button>
         </div>
       </div>

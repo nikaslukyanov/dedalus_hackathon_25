@@ -8,6 +8,7 @@ export const useProcesses = () => {
     updateProcess,
     deleteProcess,
     runProcess,
+    pauseProcess,
   } = useProcessStore();
 
   const createProcess = (name: string, description: string, recording: Blob | null) => {
@@ -47,6 +48,7 @@ export const useProcesses = () => {
     updateProcessStatus,
     deleteProcess,
     runProcess,
+    pauseProcess,
     formatLastRun,
   };
 };

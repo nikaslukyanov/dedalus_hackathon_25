@@ -27,6 +27,7 @@ export interface ProcessStore {
   setProcessing: (isProcessing: boolean) => void;
   setRecordingTime: (time: number) => void;
   runProcess: (id: string) => void;
+  pauseProcess: (id: string) => void;
 }
 
 export type RecordingState = 'idle' | 'recording' | 'processing' | 'success';
