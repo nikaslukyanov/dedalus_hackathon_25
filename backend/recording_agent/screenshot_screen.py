@@ -39,19 +39,29 @@ class SessionRecorder:
 
     def _continuous_capture(self):
         """Capture screenshots at 10 fps (every 100ms)"""
+        screenshot_counter = 0
         while self.running:
             screenshot = self._capture_screen()
             timestamp = time.time() - self.start_time
 
-            # Check if we have a pending event
-            has_event = self.pending_event
-            if has_event:
-                self.pending_event = False  # Clear flag after marking
+            # Check if this is the 2nd screenshot after click (accounting for lag)
+            has_event = False
+            if self.pending_event_count > 0:
+                self.pending_event_count += 1
+                if self.pending_event_count == 3:  # Mark the 2nd screenshot after click
+                    has_event = True
+                    self.pending_event_count = 0  # Reset
+            
+                if self.pending_event_count == 2:  # Mark the 1nd screenshot after click but do not reset 
+                    has_event = True
+                    screenshot_counter += 1 
+                
 
             self.screenshots.append({
                 "image": screenshot,
                 "timestamp": timestamp,
-                "has_event": has_event
+                "has_event": has_event, 
+                "counter": screenshot_counter,
             })
 
             time.sleep(0.1)  # 100ms = 10 fps
@@ -80,8 +90,8 @@ class SessionRecorder:
                 "button": str(button),
                 "timestamp": timestamp
             })
-            # Set flag so next screenshot gets marked
-            self.pending_event = True
+            # Start counting - 2nd screenshot after this will get marked
+            self.pending_event_count = 1
 
     def _save_screenshots(self):
         """Save all screenshots to files"""
@@ -95,14 +105,11 @@ class SessionRecorder:
         print(f"Saving {len(self.screenshots)} screenshots...")
 
         for i, shot in enumerate(self.screenshots):
-            # Add _event suffix if this screenshot has an event
+            # Only save screenshots that have events
             if shot.get("has_event"):
-                screenshot_path = f"{screenshot_dir}/screenshot_{i:04d}_event.jpg"
-            else:
-                screenshot_path = f"{screenshot_dir}/screenshot_{i:04d}.jpg"
-
-            with open(screenshot_path, 'wb') as f:
-                f.write(shot["image"])
+                screenshot_path = f"{screenshot_dir}/screenshot_{i:04d}_event_{shot.get('counter')}.jpg"
+                with open(screenshot_path, 'wb') as f:
+                    f.write(shot["image"])
 
         # Save events (clicks)
         import json
