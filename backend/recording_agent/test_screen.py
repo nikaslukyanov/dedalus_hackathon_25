@@ -1,7 +1,8 @@
+"""Test script for simple screenshot recorder"""
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode
-from screen import SessionRecorder
-import time
+from screenshot_screen import SessionRecorder
+
 
 class RecorderController:
     def __init__(self):
@@ -10,22 +11,22 @@ class RecorderController:
 
     def start_recording(self):
         if not self.is_recording:
-            print("\n🔴 Recording STARTED - Press Ctrl+C to stop")
-            self.recorder = SessionRecorder(buffer_seconds=5)
+            print("\n🔴 Recording STARTED - Screenshots every 100ms")
+            self.recorder = SessionRecorder()
             self.recorder.start_recording()
             self.is_recording = True
 
     def stop_recording(self):
         if self.is_recording:
-            print("\n⏹️  Recording STOPPED - Saving files...")
+            print("\n⏹️  Recording STOPPED - Saving screenshots...")
             self.recorder.stop_recording()
             self.is_recording = False
-            print("✅ Files saved to 'recordings/' folder")
+
 
 def main():
     controller = RecorderController()
 
-    print("📹 Screen Recorder Test")
+    print("📹 Simple Screenshot Recorder")
     print("=" * 50)
     print("Press Ctrl+A to START recording")
     print("Press Ctrl+C to STOP recording and save")
@@ -59,6 +60,7 @@ def main():
         listener.join()
 
     print("\n👋 Exiting...")
+
 
 if __name__ == "__main__":
     main()
