@@ -63,16 +63,41 @@ async def process_screenshots_with_runner(screenshots_dir: str, output_path: str
     client = AsyncDedalus()
     runner = DedalusRunner(client)
 
-    # Collect all screenshots
+    # Collect all screenshots - handle both direct directory and recording_agent output structure
     screenshots_path = Path(screenshots_dir)
-    image_files = sorted(
-        list(screenshots_path.glob("*.jpg")) +
-        list(screenshots_path.glob("*.jpeg")) +
-        list(screenshots_path.glob("*.png"))
-    )
+    
+    # Look for screenshots in the directory structure created by recording_agent
+    image_files = []
+    
+    # First, try to find images in the provided directory
+    image_files.extend(sorted(screenshots_path.glob("*.jpg")))
+    image_files.extend(sorted(screenshots_path.glob("*.jpeg")))
+    image_files.extend(sorted(screenshots_path.glob("*.png")))
+    
+    # If no images found, look for recording_agent output structure
+    if not image_files:
+        # Look for subdirectories with _screenshots suffix (recording_agent format)
+        screenshot_dirs = [d for d in screenshots_path.iterdir() 
+                          if d.is_dir() and d.name.endswith('_screenshots')]
+        
+        for screenshot_dir in screenshot_dirs:
+            image_files.extend(sorted(screenshot_dir.glob("*.jpg")))
+            image_files.extend(sorted(screenshot_dir.glob("*.jpeg")))
+            image_files.extend(sorted(screenshot_dir.glob("*.png")))
+    
+    # If still no images, look in parent directories for recordings
+    if not image_files:
+        # Look in recordings directory structure
+        recordings_path = screenshots_path.parent / "recording_agent" / "recordings"
+        if recordings_path.exists():
+            for session_dir in recordings_path.iterdir():
+                if session_dir.is_dir() and session_dir.name.endswith('_screenshots'):
+                    image_files.extend(sorted(session_dir.glob("*.jpg")))
+                    image_files.extend(sorted(session_dir.glob("*.jpeg")))
+                    image_files.extend(sorted(session_dir.glob("*.png")))
 
     if not image_files:
-        raise ValueError(f"No image files found in {screenshots_dir}")
+        raise ValueError(f"No image files found in {screenshots_dir} or related recording directories")
 
     print(f"Found {len(image_files)} screenshots:")
     for img in image_files[:5]:  # Show first 5
@@ -162,7 +187,7 @@ async def process_screenshots_with_runner(screenshots_dir: str, output_path: str
                 "raw_response": response_text
             }
 
-    # Ensure proper format
+    # Ensure proper format matches browser_agent/sample.json exactly
     if "task_id" not in output_data:
         output_data["task_id"] = "001"
     if "task_name" not in output_data:
@@ -170,18 +195,45 @@ async def process_screenshots_with_runner(screenshots_dir: str, output_path: str
     if "steps" not in output_data:
         output_data["steps"] = []
 
+    # Validate and clean the steps format to match sample.json
+    if isinstance(output_data.get("steps"), list):
+        cleaned_steps = []
+        for i, step in enumerate(output_data["steps"], 1):
+            if isinstance(step, dict):
+                cleaned_step = {
+                    "step_id": f"{i:03d}",  # Format as "001", "002", etc.
+                    "step_name": step.get("step_name", f"Step {i}")
+                }
+                cleaned_steps.append(cleaned_step)
+        output_data["steps"] = cleaned_steps
+
+    # Remove any extra fields that don't match the sample format
+    final_output = {
+        "task_id": output_data.get("task_id", "001"),
+        "task_name": output_data.get("task_name", "Task from screenshots"),
+        "steps": output_data.get("steps", [])
+    }
+
     # Save output
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w") as f:
-        json.dump(output_data, f, indent=2)
+        json.dump(final_output, f, indent=2)
 
     print(f"\n✅ Saved output to: {output_path}")
-    print(f"   Task: {output_data['task_name']}")
-    print(f"   Steps: {len(output_data['steps'])}")
+    print(f"   Task: {final_output['task_name']}")
+    print(f"   Steps: {len(final_output['steps'])}")
+    
+    # Verify the output matches the expected format
+    print(f"\n📋 Output format verification:")
+    print(f"   task_id: {final_output['task_id']}")
+    print(f"   task_name: {final_output['task_name']}")
+    print(f"   steps count: {len(final_output['steps'])}")
+    for step in final_output['steps'][:3]:  # Show first 3 steps
+        print(f"     - {step['step_id']}: {step['step_name']}")
 
-    return output_data
+    return final_output
 
 
 async def main():
